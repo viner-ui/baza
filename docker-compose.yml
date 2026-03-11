@@ -7,16 +7,18 @@ services:
       - "8000:8000"
     volumes:
       - repair-db:/var/www/html/database
+      # Исходники с хоста — изменения в коде и шаблонах подхватываются без пересборки
+      - ./repair-app/app:/var/www/html/app
+      - ./repair-app/config:/var/www/html/config
+      - ./repair-app/public:/var/www/html/public
+      - ./repair-app/resources:/var/www/html/resources
+      - ./repair-app/routes:/var/www/html/routes
     environment:
       - APP_ENV=local
       - APP_DEBUG=1
       - DB_CONNECTION=sqlite
       - DB_DATABASE=/var/www/html/database/database.sqlite
-    command: >
-      sh -c "touch database/database.sqlite
-             && php artisan migrate -f --force
-             && php artisan db:seed --force
-             && php artisan serve --host=0.0.0.0 --port=8000"
+    command: ["sh", "-c", "touch database/database.sqlite && php artisan migrate --force && php artisan db:seed --force && php artisan serve --host=0.0.0.0 --port=8000"]
     stdin_open: true
     tty: true
 
